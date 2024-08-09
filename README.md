@@ -29,3 +29,5 @@ docker build -t mm_carrot .
 
 ## Tools
 ### Rerun visualization
+
+- [rerun_visualization](tools/rerun_visualization)
