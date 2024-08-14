@@ -25,6 +25,8 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-rec
     libsm6 \
     libxext6 \
     libxrender-dev \
+    libgtk-3-dev \
+    libxkbcommon-x11-0 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -56,3 +58,5 @@ COPY setup.py setup.py
 COPY README.md README.md
 
 RUN pip install --no-cache-dir -e .
+
+ENV WGPU_BACKEND=gl
