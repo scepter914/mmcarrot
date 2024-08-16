@@ -13,23 +13,67 @@ from mmengine.runner import Runner, autocast, load_checkpoint
 
 def parse_args() -> dict[Any]:
     parser = argparse.ArgumentParser()
-    parser.add_argument("config", metavar="FILE")
-    parser.add_argument("visualization_config", metavar="FILE")
-    parser.add_argument("--fix-rotation", action="store_true")
-    parser.add_argument("--objects",
-                        type=str,
-                        default="prediction",
-                        choices=["prediction", "ground_truth"])
-    parser.add_argument("--checkpoint", type=str, default=None)
-    parser.add_argument("--split",
-                        type=str,
-                        default="test",
-                        choices=["train", "val", "test"])
-    parser.add_argument("--bbox-score", type=float, default=0.4)
-    parser.add_argument("--out-dir",
-                        type=str,
-                        default="work_dirs/visualization")
-    parser.add_argument("--image-num", type=int, default=6)
+    parser.add_argument(
+        "config",
+        metavar="FILE",
+        help="The config of model file or dataset loader.",
+    )
+    parser.add_argument(
+        "visualization_config",
+        metavar="FILE",
+        help="The config for visualization.",
+    )
+    parser.add_argument(
+        "--fix-rotation",
+        action="store_true",
+        help="The option for fixing rotation bug. it needs for nuScenes data.",
+    )
+    parser.add_argument(
+        "--objects",
+        type=str,
+        default="prediction",
+        choices=["prediction", "ground_truth"],
+        help=
+        "What objects you want to visualize. You choice from prediction, ground_truth.",
+    )
+    parser.add_argument(
+        "--checkpoint",
+        type=str,
+        default=None,
+        help=
+        "If you choose prediction visualization, you need checkpoint file.",
+    )
+    parser.add_argument(
+        "--split",
+        type=str,
+        default="test",
+        choices=["train", "val", "test"],
+        help="Choose dataset from train, val and test.",
+    )
+    parser.add_argument(
+        "--bbox-score",
+        type=float,
+        default=0.4,
+        help="Score threshold if you choose prediction visualization.",
+    )
+    #parser.add_argument(
+    #    "--out-dir",
+    #    type=str,
+    #    default="work_dirs/visualization",
+    #    help="",
+    #)
+    parser.add_argument(
+        "--image-num",
+        type=int,
+        default=6,
+        help="The number of images. 6 is default number for NuScenes dataset.",
+    )
+    parser.add_argument(
+        "--skip-frames",
+        type=int,
+        default=1,
+        help="The number of skip frames.",
+    )
     rr.script_add_args(parser)
 
     args = parser.parse_args()
@@ -275,6 +319,9 @@ def main():
     init_rerun(args, cfg_visualization.camera_panels)
 
     for frame_number, data in enumerate(dataset):
+        if frame_number % args.skip_frames != 0:
+            continue
+
         # set frame number
         rr.set_time_seconds("frame_number", frame_number * 0.1)
 

@@ -108,7 +108,17 @@ python {config_file} {visualization_config_file} \
 [--fix-rotation] --checkpoint {checkpoint_file} --split test --bbox-score 0.1 --out-dir work_dirs/visualization
 ```
 
-- Example with CenterPoint
+- Visualize NuScenes dataset with pre-process
+  - Note that this command use about 20GB RAM
+
+```sh
+python tools/rerun_visualization/visualize.py \
+projects/CenterPoint/configs/centerpoint_pillar02_second_secfpn_head-circlenms_8xb4-cyclic-20e_nus-3d.py \
+tools/rerun_visualization/configs/nuscenes.py \
+--fix-rotation --split test --bbox-score 0.4 --objects ground_truth --image-num 6
+```
+
+- Visualize CenterPoint inference results
   - As for parameters, please see `python tools/rerun_visualization/visualize.py -h`
 
 ```sh
@@ -117,6 +127,17 @@ projects/CenterPoint/configs/centerpoint_pillar02_second_secfpn_head-circlenms_8
 tools/rerun_visualization/configs/nuscenes.py \
 --checkpoint work_dirs/pretrain/centerpoint_02pillar_second_secfpn_circlenms_4x8_cyclic_20e_nus_20220811_031844-191a3822.pth \
 --fix-rotation --split test --bbox-score 0.4 --objects prediction --image-num 6
+```
+
+- If you visualize on low computing device like a laptop, you should use the option of frame skipping.
+  - Use about 3GB RAM
+
+```sh
+python tools/rerun_visualization/visualize.py \
+projects/CenterPoint/configs/centerpoint_pillar02_second_secfpn_head-circlenms_8xb4-cyclic-20e_nus-3d.py \
+tools/rerun_visualization/configs/nuscenes.py \
+--checkpoint work_dirs/pretrain/centerpoint_02pillar_second_secfpn_circlenms_4x8_cyclic_20e_nus_20220811_031844-191a3822.pth \
+--fix-rotation --split test --bbox-score 0.4 --objects prediction --image-num 6 --skip-frames 10
 ```
 
 ## Tips
