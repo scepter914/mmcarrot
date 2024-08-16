@@ -2,6 +2,12 @@
 
 ## Summary
 
+[Rerun](https://github.com/rerun-io/rerun) visualization with [mmdetection3d](https://github.com/open-mmlab/mmdetection3d).
+This tool can visualize as below
+
+- Inference results from 3D detection models
+- Ground truth with pre-process filtering like `PointsRangeFilter` of mmdetection3d function.
+
 [TBD] add movie
 
 ## Environment
