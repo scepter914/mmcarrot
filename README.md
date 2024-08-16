@@ -1,6 +1,6 @@
 # mmcarrot
 
-This repository is my tools with [mm series](https://github.com/open-mmlab).
+This repository gives my tools with [MMLab libraries](https://github.com/open-mmlab).
 
 ## Supported environment
 
@@ -10,10 +10,11 @@ This repository is my tools with [mm series](https://github.com/open-mmlab).
   - [pytorch v2.2.0](https://github.com/pytorch/pytorch/tree/v2.2.0)
   - [mmcv v2.1.0](https://github.com/open-mmlab/mmcv/tree/v2.1.0)
   - [mmdetection3d v1.4.0](https://github.com/open-mmlab/mmdetection3d/tree/v1.4.0)
-  - [mmdetection v3.2.0](https://github.com/open-mmlab/mmdetection/tree/v3.3.0)
+  - [mmdetection v3.2.0](https://github.com/open-mmlab/mmdetection/tree/v3.2.0)
   - [mmdeploy v1.3.1](https://github.com/open-mmlab/mmdeploy/tree/v1.3.1)
+  - [mmpretrain v1.2.0](https://github.com/open-mmlab/mmpretrain/tree/v1.2.0)
 
-## Set environment
+## Set docker environment
 
 - Clone
 

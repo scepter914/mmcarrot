@@ -118,3 +118,16 @@ tools/rerun_visualization/configs/nuscenes.py \
   - Below example shows the visualization using monitors connected vertically.
 
 ![](docs/example.png)
+
+## Citation
+
+If you find this project useful in your research, please consider cite:
+
+```
+@misc{mmcarrot,
+    title={Rerun visualization with mmdetection3d},
+    author={Satoshi Tanaka},
+    howpublished = {\url{https://github.com/scepter914/mmcarrot}},
+    year={2024}
+}
+```
