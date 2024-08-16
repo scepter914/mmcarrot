@@ -18,6 +18,7 @@
   - [x] LiDAR point visualization
   - [x] Camera image visualization
   - [x] 3D bounding box visualization
+  - [ ] 2D bounding box visualization from 3D bounding box
   - [ ] 3D bounding box visualization with segmentated pointcloud
 
 ## Limitation
