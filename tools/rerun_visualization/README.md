@@ -11,11 +11,12 @@ This tool can visualize as below
 [TBD] add movie
 
 ## Environment
+### Environment
 
 - [rerun](https://github.com/rerun-io/rerun) 0.17.0
 - The visualization code is running on Docker environment and rerun desktop application is running on native environment on Ubuntu 22.04LTS.
 
-## Supported feature
+### Supported feature
 
 - Dataset
   - [x] Nuscenes dataset
@@ -27,7 +28,7 @@ This tool can visualize as below
   - [ ] 2D bounding box visualization from 3D bounding box
   - [ ] 3D bounding box visualization with segmentated pointcloud
 
-## Limitation
+### Note
 
 - Only simple visualization
 
@@ -39,19 +40,18 @@ From the specifications of [mmdetection3d](https://github.com/open-mmlab/mmdetec
 First, the view from base_link is only implemented.
 This is because the data of `Runner.build_dataloader(cfg.test_dataloader)` of mmdetection3d library.
 It has only sensor data and it doesn't have ego vehicle pose and timestamp.
-So if you want to make something like [rerun example](https://github.com/rerun-io/rerun/tree/2acbb15ec8bf661db94139d5e3bc006f43ba1a57/examples/python/nuscenes_dataset), you need to implement visualization scripts for each dataset.
+So if you want to add detail information like [rerun example](https://github.com/rerun-io/rerun/tree/2acbb15ec8bf661db94139d5e3bc006f43ba1a57/examples/python/nuscenes_dataset), you need to implement visualization scripts for each dataset.
 
 - Only python implement
 
 [Rerun](https://github.com/rerun-io/rerun) is implemented by Rust.
-Native language is ideal to implement because it can be mature supports.
-I face some cases like "its function is only supported by native language C++, not for python API".
-In addition, I'm also an user of Rust and strongly support [this blog](https://rerun.io/blog/why-rust).
-So implementing this tool by Rust is another choice for me.
+Native language of library is ideal to implement because it can be mature supports.
+I faced some cases like "its function is only supported by C++, not for python API".
+In addition, I'm also an user of Rust and strongly support [this blog](https://rerun.io/blog/why-rust), so implementing this tool by Rust is another choice for me.
 
 However, (unfortunately for Rust users) when we use eco system of machine learning like MMLab libraries, of course it is a reasonable choice to use python.
 As much as I know, [rerun](https://github.com/rerun-io/rerun) gives us mature python API and it supports many functions.
-Thanks to it's supporting, this tool can choice python implementation using python API of [rerun](https://github.com/rerun-io/rerun).
+Thanks to it's supporting, this tool can choose python implementation using python API of [rerun](https://github.com/rerun-io/rerun).
 
 ## Get started
 ### 1. Build and run docker
