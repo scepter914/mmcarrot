@@ -46,7 +46,7 @@ So if you want to add detail information like [rerun example](https://github.com
 
 [Rerun](https://github.com/rerun-io/rerun) is implemented by Rust.
 Native language of library is ideal to implement because it can be mature supports.
-I faced some cases like "its function is only supported by C++, not for python API".
+For example, I faced some cases like "its function is only supported by C++, not for python API".
 In addition, I'm also an user of Rust and strongly support [this blog](https://rerun.io/blog/why-rust), so implementing this tool by Rust is another choice for me.
 
 However, (unfortunately for Rust users) when we use eco system of machine learning like MMLab libraries, of course it is a reasonable choice to use python.
@@ -56,7 +56,10 @@ Thanks to it's supporting, this tool can choose python implementation using pyth
 ## Get started
 ### 1. Build and run docker
 
-- Install
+- Install docker and rerun
+  - https://docs.docker.com/engine/install/
+  - https://rerun.io/docs/getting-started/installing-viewer
+- Run command for GUI with docker
 
 ```
 xhost + local:
@@ -68,21 +71,16 @@ xhost + local:
 docker build -t mmcarrot .
 ```
 
-- Run
+- Run docker environment
 
 ```sh
 docker run -it --rm --gpus 'all,"capabilities=compute,utility,graphics"' --shm-size=64g --name mmcarrot --net host -v $PWD/:/workspace -v {path_to_dataset}:/workspace/data -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY mmcarrot
 ```
 
-- For example
-
-```sh
-docker run -it --rm --gpus 'all,"capabilities=compute,utility,graphics"' --shm-size=64g --name awml -v $PWD/:/workspace -v $HOME/local/dataset:/workspace/data --net host -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY autoware-ml
-```
-
 ### 2. Prepare data
 
-- Create info file for nuscenes
+- Prepare [NuScenes dataset](https://www.nuscenes.org/)
+- Create info file for NuScenes
 
 ```sh
 python tools/create_data/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes
@@ -95,13 +93,14 @@ python tools/create_data/create_data.py nuscenes --root-path ./data/nuscenes --o
 
 ### 3. Visualize
 
-- Run on your native environment
+- Stand another terminal and Run on your native environment
 
 ```
 rerun
 ```
 
-- Run in docker
+- Run visualization scripts in docker environment
+  - As for parameters, please see `python tools/rerun_visualization/visualize.py -h`
 
 ```sh
 python {config_file} {visualization_config_file} \
@@ -109,7 +108,7 @@ python {config_file} {visualization_config_file} \
 ```
 
 - Visualize NuScenes dataset with pre-process
-  - Note that this command use about 20GB RAM
+  - Note that this command uses about 20GB RAM
 
 ```sh
 python tools/rerun_visualization/visualize.py \
@@ -119,7 +118,6 @@ tools/rerun_visualization/configs/nuscenes.py \
 ```
 
 - Visualize CenterPoint inference results
-  - As for parameters, please see `python tools/rerun_visualization/visualize.py -h`
 
 ```sh
 python tools/rerun_visualization/visualize.py \
@@ -130,7 +128,7 @@ tools/rerun_visualization/configs/nuscenes.py \
 ```
 
 - If you visualize on low computing device like a laptop, you should use the option of frame skipping.
-  - Use about 3GB RAM
+  - Use about 3GB RAM as below command.
 
 ```sh
 python tools/rerun_visualization/visualize.py \
