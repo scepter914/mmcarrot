@@ -9,6 +9,7 @@ from mmengine.config import Config
 from mmengine.device import get_device
 from mmengine.registry import init_default_scope
 from mmengine.runner import Runner, autocast, load_checkpoint
+from torch import Tensor
 
 
 def parse_args() -> dict[Any]:
@@ -22,11 +23,6 @@ def parse_args() -> dict[Any]:
         "visualization_config",
         metavar="FILE",
         help="The config for visualization.",
-    )
-    parser.add_argument(
-        "--fix-rotation",
-        action="store_true",
-        help="The option for fixing rotation bug. it needs for nuScenes data.",
     )
     parser.add_argument(
         "--objects",
@@ -73,6 +69,16 @@ def parse_args() -> dict[Any]:
         type=int,
         default=1,
         help="The number of skip frames.",
+    )
+    parser.add_argument(
+        "--visualize-2dbbox",
+        action="store_true",
+        help="The option to visualize 2D bounding box in images.",
+    )
+    parser.add_argument(
+        "--fix-rotation",
+        action="store_true",
+        help="The option for fixing rotation bug. it needs for nuScenes data.",
     )
     rr.script_add_args(parser)
 
@@ -158,8 +164,8 @@ def init_rerun(args: dict[Any], camera_panels: list[str]):
             name="3D",
             origin="world",
             # Default for `ImagePlaneDistance` so that the pinhole frustum visualizations don't take up too much space.
-            #defaults=[rr.components.ImagePlaneDistance(4.0)],
-            #overrides={"world/ego_vehicle": [rr.components.AxisLength(5.0)]},
+            # defaults=[rr.components.ImagePlaneDistance(4.0)],
+            # overrides={"world/ego_vehicle": [rr.components.AxisLength(5.0)]},
         ),
         rrb.Grid(*sensor_space_views),
         row_shares=[5, 2],
@@ -190,53 +196,23 @@ def euler_to_quaternion(
     return [qx, qy, qz, qw]
 
 
-def visualize_gt_objects(
+def convert_gt_objects(
     data: dict[Any],
-    fix_rotation: bool,
     frame_number: int,
-    object_colors: list[list[int]],
-):
-
-    centers = []
-    sizes = []
-    quaternions = []
-    colors = []
+) -> list[Tensor]:
     if "gt_bboxes_labels" in data["data_samples"][0].eval_ann_info:
-        for bbox in data["data_samples"][0].eval_ann_info["gt_bboxes_3d"]:
-            bbox = bbox.to('cpu').detach().numpy().copy()
-            size = bbox[3:6]
-            sizes.append(size)
-            center = bbox[0:3]
-            # fixed center point at z-axis
-            center[2] += size[2] / 2.0
-            centers.append(center)
-            rotation = euler_to_quaternion(*bbox[6:9], fix_rotation)
-            quaternions.append(rr.Quaternion(xyzw=rotation))
+        bboxes = data["data_samples"][0].eval_ann_info["gt_bboxes_3d"]
         labels = data["data_samples"][0].eval_ann_info["gt_bboxes_labels"]
-
-        for label in labels:
-            colors.append(object_colors[label])
-
-        rr.log(
-            "world/ego_vehicle/bbox",
-            rr.Boxes3D(
-                centers=centers,
-                sizes=sizes,
-                rotations=quaternions,
-                class_ids=labels,
-                colors=colors,
-            ),
-        )
+        return bboxes, labels
     else:
         print(f"frame {frame_number}: there is no objects")
+        return None, None
 
 
-def visualize_pred_objects(
+def convert_pred_objects(
     outputs: dict[Any],
     bbox_score_threshold: float,
-    fix_rotation: bool,
-    object_colors: list[list[int]],
-):
+) -> list[Tensor]:
     bboxes = outputs[0].pred_instances_3d["bboxes_3d"].tensor.detach().cpu()
     scores = outputs[0].pred_instances_3d["scores_3d"].detach().cpu()
     labels = outputs[0].pred_instances_3d["labels_3d"].detach().cpu()
@@ -245,16 +221,24 @@ def visualize_pred_objects(
         bboxes = bboxes[indices]
         scores = scores[indices]
         labels = labels[indices]
+    return bboxes, labels
 
+
+def visualize_objects(
+    bboxes: Tensor,
+    labels: Tensor,
+    fix_rotation: bool,
+    object_colors: list[list[int]],
+):
     centers = []
     sizes = []
     quaternions = []
     colors = []
-
     for bbox in bboxes:
-        size = bbox[3:6].to('cpu').detach().numpy().copy()
+        bbox = bbox.to('cpu').detach().numpy().copy()
+        size = bbox[3:6]
         sizes.append(size)
-        center = bbox[0:3].to('cpu').detach().numpy().copy()
+        center = bbox[0:3]
         # fixed center point at z-axis
         center[2] += size[2] / 2.0
         centers.append(center)
@@ -270,7 +254,7 @@ def visualize_pred_objects(
             centers=centers,
             sizes=sizes,
             rotations=quaternions,
-            class_ids=labels.numpy().copy(),
+            class_ids=labels,
             colors=colors,
         ),
     )
@@ -284,7 +268,11 @@ def visualize_lidar(data: dict[Any], sensor_name: list[str]):
            rr.Points3D(points, colors=[170, 170, 170]))
 
 
-def visualize_camera(data, camera_orders: list[str]):
+def visualize_camera(
+    data,
+    camera_orders: list[str],
+    visualize_2dbbox: bool,
+):
     for panel_name, img_path in zip(camera_orders,
                                     data["data_samples"][0].img_path):
         rr.log(f"world/ego_vehicle/{panel_name}",
@@ -321,6 +309,8 @@ def main():
     for frame_number, data in enumerate(dataset):
         if frame_number % args.skip_frames != 0:
             continue
+        if frame_number == 100:
+            break
 
         # set frame number
         rr.set_time_seconds("frame_number", frame_number * 0.1)
@@ -336,19 +326,21 @@ def main():
         )
 
         # bounding box
+        bboxes = None
+        labels = None
         if args.objects == "ground_truth":
-            visualize_gt_objects(
-                data,
-                args.fix_rotation,
-                frame_number,
-                class_color_list,
-            )
+            bboxes, labels = convert_gt_objects(data, frame_number)
         elif args.objects == "prediction":
             with autocast(enabled=True):
                 outputs = model.test_step(data)
-            visualize_pred_objects(
+            bboxes, labels = convert_pred_objects(
                 outputs,
                 args.bbox_score,
+            )
+        if bboxes is not None:
+            visualize_objects(
+                bboxes,
+                labels,
                 args.fix_rotation,
                 class_color_list,
             )
@@ -357,7 +349,11 @@ def main():
         visualize_lidar(data, cfg_visualization.data_prefix["pts"])
 
         # camera
-        visualize_camera(data, cfg_visualization.camera_orders)
+        visualize_camera(
+            data,
+            cfg_visualization.camera_orders,
+            args.visualize_2dbbox,
+        )
 
     rr.script_teardown(args)
 
