@@ -42,6 +42,10 @@ This is because the data of `Runner.build_dataloader(cfg.test_dataloader)` of mm
 It has only sensor data and it doesn't have ego vehicle pose and timestamp.
 So if you want to add detail information like [rerun example](https://github.com/rerun-io/rerun/tree/2acbb15ec8bf661db94139d5e3bc006f43ba1a57/examples/python/nuscenes_dataset), you need to implement visualization scripts for each dataset.
 
+- Different coordinate with robotics coordinate
+
+This tool visualize by mmdetection3d coordinate. It may be different from usual robotics coordinate.
+
 - Only python implement
 
 [Rerun](https://github.com/rerun-io/rerun) is implemented by Rust.
