@@ -309,8 +309,6 @@ def main():
     for frame_number, data in enumerate(dataset):
         if frame_number % args.skip_frames != 0:
             continue
-        if frame_number == 100:
-            break
 
         # set frame number
         rr.set_time_seconds("frame_number", frame_number * 0.1)
