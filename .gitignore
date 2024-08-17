@@ -1,7 +1,6 @@
 # Repository setting
 /data
 /work_dirs
-tests/samplefiles/data
 *.bin
 *.onnx
 *.engine
@@ -145,4 +144,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
