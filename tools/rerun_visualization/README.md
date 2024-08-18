@@ -107,8 +107,11 @@ rerun
   - As for parameters, please see `python tools/rerun_visualization/visualize.py -h`
 
 ```sh
-python {config_file} {visualization_config_file} \
-[--fix-rotation] --checkpoint {checkpoint_file} --split test --bbox-score 0.1 --out-dir work_dirs/visualization
+python tools/rerun_visualization/visualize.py \
+{config_file} \
+{visualization_config_file} \
+--checkpoint {checkpoint_file} \
+[--fix-rotation] --split [train, val, test] --bbox-score [float] --objects [ground_truth, prediction] --image-num [int]
 ```
 
 - Visualize NuScenes dataset with pre-process
