@@ -266,7 +266,6 @@ def visualize_lidar(data: dict[Any], sensor_name: list[str]):
 def visualize_camera(
     data,
     camera_orders: list[str],
-    visualize_2dbbox: bool,
 ):
     for panel_name, img_path in zip(camera_orders,
                                     data["data_samples"][0].img_path):
@@ -345,7 +344,6 @@ def main():
         visualize_camera(
             data,
             cfg_visualization.camera_orders,
-            args.visualize_2dbbox,
         )
 
     rr.script_teardown(args)
