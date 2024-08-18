@@ -71,11 +71,6 @@ def parse_args() -> dict[Any]:
         help="The number of skip frames.",
     )
     parser.add_argument(
-        "--visualize-2dbbox",
-        action="store_true",
-        help="The option to visualize 2D bounding box in images.",
-    )
-    parser.add_argument(
         "--fix-rotation",
         action="store_true",
         help="The option for fixing rotation bug. it needs for nuScenes data.",
