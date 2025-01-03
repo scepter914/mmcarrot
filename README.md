@@ -20,7 +20,7 @@ This repository gives my tools with [MMLab libraries](https://github.com/open-mm
 - Clone
 
 ```
-git clone https://github.com/scepter914/mm-project-template
+git clone https://github.com/scepter914/mmcarrot
 ```
 
 - Build docker
