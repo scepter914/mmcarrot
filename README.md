@@ -26,7 +26,7 @@ git clone https://github.com/scepter914/mm-project-template
 - Build docker
 
 ```sh
-docker build -t mm_carrot .
+docker build -t mmcarrot .
 ```
 
 ## Tools

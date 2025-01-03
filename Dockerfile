@@ -51,7 +51,7 @@ RUN mim install \
 
 WORKDIR /workspace
 
-COPY mm_carrot mm_carrot
+COPY mmcarrot mmcarrot
 COPY projects projects
 COPY tools tools
 COPY setup.py setup.py
