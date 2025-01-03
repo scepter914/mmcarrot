@@ -158,6 +158,7 @@ def init_rerun(args: dict[Any], camera_panels: list[str]):
         rrb.Spatial3DView(
             name="3D",
             origin="world",
+            background=[30, 30, 30],
             # Default for `ImagePlaneDistance` so that the pinhole frustum visualizations don't take up too much space.
             # defaults=[rr.components.ImagePlaneDistance(4.0)],
             # overrides={"world/ego_vehicle": [rr.components.AxisLength(5.0)]},
