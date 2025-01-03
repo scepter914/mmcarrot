@@ -13,7 +13,7 @@ https://github.com/user-attachments/assets/16b3d085-4453-4109-b917-99ed9f40dfdc
 ## Environment
 ### Environment
 
-- [rerun](https://github.com/rerun-io/rerun) 0.17.0
+- [rerun](https://github.com/rerun-io/rerun) 0.21.0
 - The visualization code is running on Docker environment and rerun desktop application is running on native environment on Ubuntu 22.04LTS.
 
 ### Supported feature
