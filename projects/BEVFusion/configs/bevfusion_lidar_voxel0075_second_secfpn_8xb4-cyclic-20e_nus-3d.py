@@ -1,7 +1,5 @@
 _base_ = ["../../../mmcarrot/configs/detection3d/default_runtime.py"]
-custom_imports = dict(
-    imports=["projects.BEVFusion.bevfusion"], allow_failed_imports=False
-)
+custom_imports = dict(imports=["projects.BEVFusion.bevfusion"], allow_failed_imports=False)
 
 # model settings
 # Voxel size for voxel encoder
@@ -130,9 +128,7 @@ model = dict(
             assigner=dict(
                 type="HungarianAssigner3D",
                 iou_calculator=dict(type="BboxOverlaps3D", coordinate="lidar"),
-                cls_cost=dict(
-                    type="mmdet.FocalLossCost", gamma=2.0, alpha=0.25, weight=0.15
-                ),
+                cls_cost=dict(type="mmdet.FocalLossCost", gamma=2.0, alpha=0.25, weight=0.15),
                 reg_cost=dict(type="BBoxBEVL1Cost", weight=0.25),
                 iou_cost=dict(type="IoU3DCost", weight=0.25),
             ),
@@ -145,9 +141,7 @@ model = dict(
             pc_range=[-54.0, -54.0],
             nms_type=None,
         ),
-        common_heads=dict(
-            center=[2, 2], height=[1, 2], dim=[3, 2], rot=[2, 2], vel=[2, 2]
-        ),
+        common_heads=dict(center=[2, 2], height=[1, 2], dim=[3, 2], rot=[2, 2], vel=[2, 2]),
         bbox_coder=dict(
             type="TransFusionBBoxCoder",
             pc_range=[-54.0, -54.0],
@@ -165,9 +159,7 @@ model = dict(
             reduction="mean",
             loss_weight=1.0,
         ),
-        loss_heatmap=dict(
-            type="mmdet.GaussianFocalLoss", reduction="mean", loss_weight=1.0
-        ),
+        loss_heatmap=dict(type="mmdet.GaussianFocalLoss", reduction="mean", loss_weight=1.0),
         loss_bbox=dict(type="mmdet.L1Loss", reduction="mean", loss_weight=0.25),
     ),
 )
@@ -390,9 +382,7 @@ val_evaluator = dict(
 test_evaluator = val_evaluator
 
 vis_backends = [dict(type="LocalVisBackend")]
-visualizer = dict(
-    type="Det3DLocalVisualizer", vis_backends=vis_backends, name="visualizer"
-)
+visualizer = dict(type="Det3DLocalVisualizer", vis_backends=vis_backends, name="visualizer")
 
 # learning rate
 lr = 0.0001

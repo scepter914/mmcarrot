@@ -29,15 +29,13 @@ def parse_args() -> dict[Any]:
         type=str,
         default="prediction",
         choices=["prediction", "ground_truth"],
-        help=
-        "What objects you want to visualize. You choice from prediction, ground_truth.",
+        help="What objects you want to visualize. You choice from prediction, ground_truth.",
     )
     parser.add_argument(
         "--checkpoint",
         type=str,
         default=None,
-        help=
-        "If you choose prediction visualization, you need checkpoint file.",
+        help="If you choose prediction visualization, you need checkpoint file.",
     )
     parser.add_argument(
         "--split",
@@ -52,12 +50,12 @@ def parse_args() -> dict[Any]:
         default=0.4,
         help="Score threshold if you choose prediction visualization.",
     )
-    #parser.add_argument(
+    # parser.add_argument(
     #    "--out-dir",
     #    type=str,
     #    default="work_dirs/visualization",
     #    help="",
-    #)
+    # )
     parser.add_argument(
         "--image-num",
         type=int,
@@ -106,8 +104,7 @@ def update_config(
 
     # update camera_orders from args
     if args.image_num < len(cfg_visualization.camera_orders):
-        cfg_visualization.camera_panels = cfg_visualization.camera_panels[
-            0:args.image_num]
+        cfg_visualization.camera_panels = cfg_visualization.camera_panels[0 : args.image_num]
 
     return cfg, cfg_visualization
 
@@ -152,7 +149,8 @@ def init_rerun(args: dict[Any], camera_panels: list[str]):
         rrb.Spatial2DView(
             name=sensor_name,
             origin=f"world/ego_vehicle/{sensor_name}",
-        ) for sensor_name in camera_panels
+        )
+        for sensor_name in camera_panels
     ]
     blueprint = rrb.Vertical(
         rrb.Spatial3DView(
@@ -181,14 +179,18 @@ def euler_to_quaternion(
     if fix_rotation:
         pitch = 0.0
         roll = 0.0
-    qx = np.sin(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) - np.cos(
-        roll / 2) * np.sin(pitch / 2) * np.sin(yaw / 2)
-    qy = np.cos(roll / 2) * np.sin(pitch / 2) * np.cos(yaw / 2) + np.sin(
-        roll / 2) * np.cos(pitch / 2) * np.sin(yaw / 2)
-    qz = np.cos(roll / 2) * np.cos(pitch / 2) * np.sin(yaw / 2) - np.sin(
-        roll / 2) * np.sin(pitch / 2) * np.cos(yaw / 2)
-    qw = np.cos(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) + np.sin(
-        roll / 2) * np.sin(pitch / 2) * np.sin(yaw / 2)
+    qx = np.sin(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) - np.cos(roll / 2) * np.sin(pitch / 2) * np.sin(
+        yaw / 2
+    )
+    qy = np.cos(roll / 2) * np.sin(pitch / 2) * np.cos(yaw / 2) + np.sin(roll / 2) * np.cos(pitch / 2) * np.sin(
+        yaw / 2
+    )
+    qz = np.cos(roll / 2) * np.cos(pitch / 2) * np.sin(yaw / 2) - np.sin(roll / 2) * np.sin(pitch / 2) * np.cos(
+        yaw / 2
+    )
+    qw = np.cos(roll / 2) * np.cos(pitch / 2) * np.cos(yaw / 2) + np.sin(roll / 2) * np.sin(pitch / 2) * np.sin(
+        yaw / 2
+    )
     return [qx, qy, qz, qw]
 
 
@@ -231,7 +233,7 @@ def visualize_objects(
     quaternions = []
     colors = []
     for bbox in bboxes:
-        bbox = bbox.to('cpu').detach().numpy().copy()
+        bbox = bbox.to("cpu").detach().numpy().copy()
         size = bbox[3:6]
         sizes.append(size)
         center = bbox[0:3]
@@ -260,31 +262,27 @@ def visualize_lidar(data: dict[Any], sensor_name: list[str]):
     lidar = data["inputs"]["points"][0]
     # shape after transposing: (num_points, 3)
     points = lidar[:, :3]
-    rr.log(f"world/ego_vehicle/{sensor_name}",
-           rr.Points3D(points, colors=[170, 170, 170]))
+    rr.log(f"world/ego_vehicle/{sensor_name}", rr.Points3D(points, colors=[170, 170, 170]))
 
 
 def visualize_camera(
     data,
     camera_orders: list[str],
 ):
-    for panel_name, img_path in zip(camera_orders,
-                                    data["data_samples"][0].img_path):
-        rr.log(f"world/ego_vehicle/{panel_name}",
-               rr.ImageEncoded(path=img_path))
+    for panel_name, img_path in zip(camera_orders, data["data_samples"][0].img_path):
+        rr.log(f"world/ego_vehicle/{panel_name}", rr.ImageEncoded(path=img_path))
 
 
 def main():
     args = parse_args()
-    init_default_scope('mmdet3d')
+    init_default_scope("mmdet3d")
 
     # create config
     cfg = Config.fromfile(args.config)
     cfg_visualization = Config.fromfile(args.visualization_config)
 
     cfg, cfg_visualization = update_config(cfg, cfg_visualization, args)
-    class_color_list = get_class_color_list(cfg_visualization.class_colors,
-                                            cfg.class_names)
+    class_color_list = get_class_color_list(cfg_visualization.class_colors, cfg.class_names)
 
     # build dataset
     dataset = Runner.build_dataloader(cfg.test_dataloader)
@@ -294,7 +292,7 @@ def main():
     if args.objects == "prediction":
         # build model and load checkpoint
         model = MODELS.build(cfg.model)
-        load_checkpoint(model, args.checkpoint, map_location='cpu')
+        load_checkpoint(model, args.checkpoint, map_location="cpu")
         model.to(get_device())
         model.eval()
 
@@ -350,5 +348,5 @@ def main():
     rr.script_teardown(args)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

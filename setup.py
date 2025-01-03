@@ -26,9 +26,7 @@ def get_version():
     return locals()["__version__"]
 
 
-def make_cuda_ext(
-    name, module, sources, sources_cuda=[], extra_args=[], extra_include_path=[]
-):
+def make_cuda_ext(name, module, sources, sources_cuda=[], extra_args=[], extra_include_path=[]):
 
     define_macros = []
     extra_compile_args = {"cxx": [] + extra_args}
@@ -189,9 +187,7 @@ if __name__ == "__main__":
     setup(
         name="mmcarrot",
         version=get_version(),
-        description=(
-            "OpenMMLab's next-generation platform" "for general 3D object detection."
-        ),
+        description=("OpenMMLab's next-generation platform" "for general 3D object detection."),
         long_description=readme(),
         long_description_content_type="text/markdown",
         author="MMDetection3D Contributors",
